@@ -1,0 +1,12 @@
+{
+    "name": "niisan/enforce",
+    "type": "library",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "cardbattle\\": "src/cardbattle",
+            "learning\\": "src/learning"
+        }
+    }
+}

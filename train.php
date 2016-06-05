@@ -14,7 +14,7 @@ $attacker->setFile(__DIR__ . '/data/attack.json', true);
 $defender->setFile(__DIR__ . '/data/defence.json', true);
 $vic_at = 0;
 $vic_de = 0;
-for ($i = 0; $i < 100000; $i ++) {
+for ($i = 0; $i < 500000; $i ++) {
     $at = mt_rand(1, 3);
     $de = mt_rand(1, 3);
 

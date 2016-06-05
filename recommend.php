@@ -12,9 +12,9 @@ $battle = new Battle();
 
 $attacker->setFile(__DIR__ . '/data/attack.json', false);
 $defender->setFile(__DIR__ . '/data/defence.json', false);
-$attacker->showModel(1, 1);
-$defender->showModel(1, 1);
-exit;
+//$attacker->showModel(1, 1);
+//$defender->showModel(1, 1);
+//exit;
 while (true) {
     $my = intval(fgets(STDIN,4096));
     $en = intval(fgets(STDIN,4096));

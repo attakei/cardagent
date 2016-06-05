@@ -5,8 +5,8 @@ $cards = [];
 for($i = 1; $i < 301; $i++) {
     $skill = mt_rand(0, 14);
     if ($skill == 0) {
-        $attack = mt_rand(20000, 23000);
-        $defence = mt_rand(20000, 23000);
+        $attack = mt_rand(18500, 20500);
+        $defence = mt_rand(18500, 20500);
     } else if (in_array($skill, [1, 3, 5, 8, 12, 13, 14])) {
         $attack = mt_rand(18000, 21000);
         $defence = mt_rand(12000, 18000);

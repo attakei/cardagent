@@ -12,7 +12,7 @@ class Learner
     private $count = 0;
     private $temp;
 
-    private $training_count = 120000;
+    private $training_count = 90000;
     private $max_epsiron = 1000000;
     private $min_epsiron = 200000;
     private $diff_epsiron = 10;
@@ -20,11 +20,12 @@ class Learner
 
     public function __construct($types, $cards_count, $deck)
     {
-        for ($i = 1; $i < $types; $i++) {
+        for ($i = 1; $i < $types + 1; $i++) {
             for ($j = 1; $j < $types; $j++) {
                 $this->model[$i][$j] = $this->initialDeck($cards_count, $deck);
             }
         }
+        $this->model['net'] = array_fill(1, $cards_count, array_fill(1, $cards_count, [0.0, 0]));
         $this->epsiron = $this->max_epsiron;
         $this->deck = $deck;
         $this->card_count = $cards_count;
@@ -76,12 +77,21 @@ class Learner
         $myType = $this->temp['myType'];
         $enType = $this->temp['enType'];
         $res = ($result > 0)? 1 : 0;
+        $first = $this->temp['cards'][1];
+        $this->updateOdds($this->model[$myType][$enType]['first'][$first], $res);
 
-        foreach ($this->temp['cards'] as $key => $val) {
-            $tmp = $this->model[$myType][$enType][$key][$val];
-            $tmp[1]++;
-            $tmp[0] = ($tmp[0] * ($tmp[1] - 1) + $res)  / $tmp[1];
-            $this->model[$myType][$enType][$key][$val] = $tmp;
+        $prev = 0;
+        foreach ($this->temp['cards'] as $val) {
+            if ($prev == 0) {
+                $prev = $val;
+                continue;
+            }
+
+            //print_r($this->model[$myType][$enType]['net'][$prev][$val]);
+            //exit;
+
+            $this->updateOdds($this->model['net'][$prev][$val], $res);
+            $prev = $val;
         }
     }
 
@@ -121,10 +131,15 @@ class Learner
     private function recommend($myType, $enType)
     {
         $model = $this->model[$myType][$enType];
-        for ($i = 1; $i < $this->deck + 1; $i++) {
-            $id = $this->recommendCore($model[$i]);
+        $prev = $this->recommendCore($model['first']);
+        $ret = [];
+        $ret[] = $prev;
+        $this->temp['cards'][1] = $prev;
+        for ($i = 2; $i < $this->deck + 1; $i++) {
+            $id = $this->recommendCore($this->model['net'][$prev]);
             $ret[] = $id;
             $this->temp['cards'][$i] = $id;
+            $prev = $id;
         }
 
         return $ret;
@@ -172,11 +187,16 @@ class Learner
     private function initialDeck($cards_count, $deck)
     {
         $ret = [];
-        for ($i = 1; $i < $deck + 1; $i++) {
-            $ret[$i] = array_fill(1, $cards_count, [0.0, 0]);
-        }
+        $ret['first'] = array_fill(1, $cards_count, [0.0, 0]);
 
         return $ret;
+    }
+
+
+    private function updateOdds(&$obj, $judge)
+    {
+        $obj[1]++;
+        $obj[0] = ($obj[0] * ($obj[1] - 1) + $judge) / $obj[1];
     }
 
 }

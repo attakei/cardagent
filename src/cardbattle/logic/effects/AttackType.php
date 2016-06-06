@@ -5,7 +5,7 @@ namespace cardbattle\logic\effects;
 class AttackType extends Base implements EffectInterface
 {
 
-    const PARAM_COMPLEMENT = 3;
+    const PARAM_COMPLEMENT = 15;
     const MESSAGE = '同属性補正による攻撃力アップ!!';
 
     public function run($attacker, $defender, $params): array

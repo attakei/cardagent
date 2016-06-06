@@ -20,7 +20,7 @@ class Learner
 
     public function __construct($types, $cards_count, $deck)
     {
-        for ($i = 1; $i < $types; $i++) {
+        for ($i = 1; $i < $types + 1; $i++) {
             for ($j = 1; $j < $types; $j++) {
                 $this->model[$i][$j] = $this->initialDeck($cards_count, $deck);
             }

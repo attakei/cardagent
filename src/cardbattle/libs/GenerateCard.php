@@ -30,4 +30,14 @@ class GenerateCard
         return $ret;
 
     }
+
+    public function randomGenerate($type)
+    {
+        $arr = [];
+        for ($i = 1; $i < 6; $i++) {
+            $arr[] = mt_rand(1, count($this->cards));
+        }
+
+        return $this->generate($type, $arr);
+    }
 }

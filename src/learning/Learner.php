@@ -12,10 +12,10 @@ class Learner
     private $count = 0;
     private $temp;
 
-    private $training_count = 30000;
+    private $training_count = 120000;
     private $max_epsiron = 1000000;
     private $min_epsiron = 200000;
-    private $diff_epsiron = 100;
+    private $diff_epsiron = 10;
     private $random = false;
 
     public function __construct($types, $cards_count, $deck)

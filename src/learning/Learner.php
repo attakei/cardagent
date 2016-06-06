@@ -56,7 +56,7 @@ class Learner
 
         $this->count++;
 
-        if ($this->count < $this->training_count or mt_rand(1, $this->max_epsiron) < $this->epsiron) {
+        if (mt_rand(1, $this->max_epsiron) < $this->epsiron) {
             return $this->random($myType, $enType);
         }
 
@@ -75,12 +75,13 @@ class Learner
     {
         $myType = $this->temp['myType'];
         $enType = $this->temp['enType'];
-        $res = ($result > 0)? 1 : -5;
+        $res = ($result > 0)? 1 : 0;
 
         foreach ($this->temp['cards'] as $key => $val) {
             $tmp = $this->model[$myType][$enType][$key][$val];
-            $tmp += $res * ($this->deck - $key + 1);//ceil($result / 1000);
-            $this->model[$myType][$enType][$key][$val] = max($tmp, 0);
+            $tmp[1]++;
+            $tmp[0] = ($tmp[0] * ($tmp[1] - 1) + $res)  / $tmp[1];
+            $this->model[$myType][$enType][$key][$val] = $tmp;
         }
     }
 
@@ -96,8 +97,8 @@ class Learner
         foreach($this->model[$my][$en] as $key => $val) {
             echo "$key => \n";
             foreach ($val as $id => $rec) {
-                if ($rec > 0) {
-                    echo "   $id => $rec\n";
+                if ($rec[0] > 0.2) {
+                    echo "   $id => $rec[0]\n";
                 }
             }
         }
@@ -136,7 +137,7 @@ class Learner
         $keys = array_keys($model);
         shuffle($keys);
         foreach ($keys as $key) {
-            $val = $model[$key];
+            $val = $model[$key][0];
             if ($id == null) {
                 $id = $key;
                 $score = $val;
@@ -147,9 +148,19 @@ class Learner
                 continue;
             }
 
-            if (mt_rand(0, $score * $score + $val * $val) < $score * $score) {
+            if ($val - $score > 0.1) {
                 $id = $key;
                 $score = $val;
+            } else if ($val - $score > 0.05) {
+                if (mt_rand(1, 10) > 3) {
+                    $id = $key;
+                    $score = $val;
+                }
+            } else if ($val - $score > -0.05) {
+                if (mt_rand(1, 10) > 8) {
+                    $id = $key;
+                    $score = $val;
+                }
             }
         }
 
@@ -162,7 +173,7 @@ class Learner
     {
         $ret = [];
         for ($i = 1; $i < $deck + 1; $i++) {
-            $ret[$i] = array_fill(1, $cards_count, 0);
+            $ret[$i] = array_fill(1, $cards_count, [0.0, 0]);
         }
 
         return $ret;
